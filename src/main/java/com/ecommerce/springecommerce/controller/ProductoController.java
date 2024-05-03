@@ -53,17 +53,10 @@ public class ProductoController {
     
     //Guardar imagen
     if(producto.getId() == null) { //Validación cuando se crea un producto
-      String nombreImagen = upload.saveImage(null);
+      String nombreImagen = upload.saveImage(file);
       producto.setImagen(nombreImagen);
     } else {
-      if (file.isEmpty()) { // Cuando editamos el producto pero no cambiamos la imagen
-        Producto p = new Producto();
-        p = productoService.get(producto.getId()).get();
-        producto.setImagen(p.getImagen());
-      }else {
-        String nombreImagen = upload.saveImage(null);
-        producto.setImagen(nombreImagen);
-      }
+      
     }
     
     productoService.save(producto);
@@ -82,7 +75,25 @@ public class ProductoController {
   }
 
   @PostMapping("/update")
-  public String update(Producto producto) {
+  public String update(Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
+    
+    Producto p = new Producto();
+    p = productoService.get(producto.getId()).get();
+
+    if (file.isEmpty()) { // Cuando editamos el producto pero no cambiamos la imagen
+      
+      producto.setImagen(p.getImagen());
+    }else {
+      // Cuando se edita la imagen
+      // Elimina la imagen si no es igual a la imagen por defecto
+      if(!p.getImagen().equals("default.jpg")){
+        upload.deleteImage(p.getImagen());
+      }
+      String nombreImagen = upload.saveImage(file);
+      producto.setImagen(nombreImagen);
+    }
+
+    producto.setUsuario(p.getUsuario());
     productoService.update(producto);
 
     return "redirect:/productos";
@@ -90,6 +101,15 @@ public class ProductoController {
 
   @GetMapping("/delete/{id}")
   public String delete(@PathVariable Integer id) {
+
+    Producto p = new Producto();
+    p = productoService.get(id).get();
+
+    // Elimina la imagen si no es igual a la imagen por defecto
+    if(!p.getImagen().equals("default.jpg")){
+      upload.deleteImage(p.getImagen());
+    }
+
     productoService.delete(id);
     return "redirect:/productos";
   }
