@@ -71,8 +71,10 @@ public class HomeController {
     detalleOrden.setCantidad(cantidad);
     detalleOrden.setPrecio(producto.getPrecio());
     detalleOrden.setNombre(producto.getNombre());
-    detalleOrden.setPrecio(producto.getPrecio() * cantidad);
+    detalleOrden.setTotal(producto.getPrecio() * cantidad);
     detalleOrden.setProducto(producto);
+
+    detalles.add(detalleOrden);
 
     // Sumar el total de los productos que añada el usuario al carrito
     sumaTotal = detalles.stream().mapToDouble(dt -> dt.getTotal()).sum();
