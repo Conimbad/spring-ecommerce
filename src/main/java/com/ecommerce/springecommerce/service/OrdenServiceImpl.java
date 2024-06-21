@@ -41,6 +41,26 @@ public class OrdenServiceImpl implements IOrdenService{
             numero = numeros.stream().max(Integer::compare).get();
             numero++;
         }
+
+        if (numero < 10) {
+            numeroConcatenado = "000000000" + String.valueOf(numero);
+        }else if (numero < 100) {
+            numeroConcatenado = "00000000" + String.valueOf(numero);
+        }else if (numero < 1000) {
+            numeroConcatenado = "0000000" + String.valueOf(numero);
+        }else if (numero < 10000) {
+            numeroConcatenado = "000000" + String.valueOf(numero);
+        }else if (numero < 100000) {
+            numeroConcatenado = "00000" + String.valueOf(numero);
+        }else if (numero < 1000000) {
+            numeroConcatenado = "0000" + String.valueOf(numero);
+        }else if (numero < 10000000) {
+            numeroConcatenado = "000" + String.valueOf(numero);
+        }else if (numero < 100000000) {
+            numeroConcatenado = "00" + String.valueOf(numero);
+        }else if (numero < 1000000000) {
+            numeroConcatenado = "0" + String.valueOf(numero);
+        }
         return numeroConcatenado;
     }
 }
