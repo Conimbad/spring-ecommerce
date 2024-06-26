@@ -26,6 +26,8 @@ import com.ecommerce.springecommerce.service.IOrdenService;
 import com.ecommerce.springecommerce.service.IUsuarioService;
 import com.ecommerce.springecommerce.service.ProductoService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/")
 public class HomeController {
@@ -51,7 +53,9 @@ public class HomeController {
   Orden orden = new Orden();
 
   @GetMapping("")
-  public String home (Model model) {
+  public String home (Model model, HttpSession session) {
+
+    log.info("Sesión del usuario: {}", session.getAttribute("idUsuario"));
 
     model.addAttribute("productos", productoService.findAll());
     return "/usuario/home";
@@ -147,9 +151,12 @@ public class HomeController {
   }
 
   @GetMapping("/orden")
-  public String orden (Model model) {
+  public String orden (Model model, HttpSession session) {
 
-    Usuario usuario = usuarioService.findById(1).get();
+    Usuario usuario = usuarioService.findById(Integer.parseInt(session
+      .getAttribute("idUsuario")
+      .toString()))
+      .get();
 
     model.addAttribute("cart", detalles);
     model.addAttribute("orden", orden);
@@ -160,14 +167,17 @@ public class HomeController {
 
   // Guardar la orden
   @GetMapping("/guardarOrden")
-  public String guardarOrden() {
+  public String guardarOrden(HttpSession session) {
 
     Date fechaCreacion = new Date();
     orden.setFechaCreacion(fechaCreacion);
     orden.setNumero(ordenService.generarNumeroOrden());
 
     // Usuario que hace referencia a la orden
-    Usuario usuario = usuarioService.findById(1).get();
+    Usuario usuario = usuarioService.findById(Integer.parseInt(session
+    .getAttribute("idUsuario")
+    .toString())).get();
+
     orden.setUsuario(usuario);
     ordenService.save(orden);
 
